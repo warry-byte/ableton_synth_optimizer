@@ -11,6 +11,7 @@ import live
 import random
 from skopt import BayesSearchCV
 import tkinter as tk
+import sys
 
 #%% User defined functions
 # Define objective function with user evaluations
@@ -30,11 +31,11 @@ def objective_function():
 
     # Button for "Bad"
     bad_button = tk.Button(root, text="Bad", command=lambda: set_evaluation(0))
-    bad_button.pack(side=tk.RIGHT, padx=10)
+    bad_button.pack(side=tk.LEFT, padx=10)
     
     # Button for "Close"
-    bad_button = tk.Button(root, text="Close", command=lambda: close)
-    bad_button.pack(side=tk.RIGHT, padx=10)
+    close_button = tk.Button(root, text="Close", command=lambda: close())
+    close_button.pack(side=tk.RIGHT, padx=10)
     
     root.mainloop()
     
@@ -55,8 +56,10 @@ def close():
     global root
     global set
     set.stop_playing()
-    root.destroy()
-    exit()
+    root.update() # process pending events
+    root.after(100, root.destroy)  # 100 milliseconds delay
+    #root.destroy()
+    sys.exit()
 
 #%% Synth information
 synth_name = "DS Clang"

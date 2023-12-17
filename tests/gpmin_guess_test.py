@@ -34,8 +34,10 @@ res = gp_minimize(func=evaluate_numbers,
                   acq_optimizer='sampling',
                   noise="gaussian")
 
+print(res)
+plot_convergence(res)
+
 # Get the best numbers
 best_numbers = res.x
 print("Best Numbers:", best_numbers)
-plot_convergence(res)
 

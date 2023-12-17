@@ -9,9 +9,11 @@ Created on Thu Dec 14 18:22:30 2023
 #%% Imports
 import live
 import random
-from skopt import BayesSearchCV
 import tkinter as tk
 import sys
+
+from skopt import gp_minimize
+from skopt.space import Integer, Real
 
 #%% User defined functions
 # Define objective function with user evaluations
@@ -38,6 +40,8 @@ def objective_function():
     close_button.pack(side=tk.RIGHT, padx=10)
     
     root.mainloop()
+
+    # Update synth parameters here?
     
     return -user_evaluation  # Minimize, so use negative of user evaluation
 
@@ -60,6 +64,7 @@ def close():
     root.after(100, root.destroy)  # 100 milliseconds delay
     #root.destroy()
     sys.exit()
+    
 
 #%% Synth information
 synth_name = "DS Clang"
@@ -83,7 +88,21 @@ for p in param_list:
     
 relevant_parameters_list = [ele for ele in param_list if (ele.name not in excluded_param)]
 
-#%% Test objective function
-objective_function()
+#%% Initialize optimizer
+search_space = []
 
-    
+for p in relevant_parameters_list:
+    search_space.append(Real(low=p.min,
+                             high=p.max,
+                             prior='uniform',
+                             transform='normalize')
+                        )
+
+# Optimize the numbers
+res = gp_minimize(func=objective_function,
+                  dimensions=search_space,
+                  n_calls=20,
+                  n_initial_points=5,
+                  acq_func='EI',
+                  acq_optimizer='sampling',
+                  noise="gaussian")

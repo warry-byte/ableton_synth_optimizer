@@ -21,8 +21,8 @@ def evaluate_numbers(guess):
 print("I will try to guess the two numbers you have in mind...")
 print("Please help me in my search!")
 
-search_space = Space([Integer(low=0, high=10, prior='uniform', transform='normalize'),
-                      Integer(low=0, high=10, prior='uniform', transform='normalize')])
+search_space = Space([Real(low=0, high=10, prior='uniform', transform='normalize'),
+                      Real(low=0, high=10, prior='uniform', transform='normalize')])
 
 
 # Optimize the numbers

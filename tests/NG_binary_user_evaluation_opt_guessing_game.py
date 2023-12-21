@@ -7,7 +7,7 @@ Created on Sun Dec 17 12:00:04 2023
 """
 
 from skopt import Optimizer, Space
-from skopt.space import Integer
+from skopt.space import Integer, Real
 from skopt.plots import plot_convergence
 
 # Function to be optimized (returning a score based on user feedback)
@@ -22,21 +22,14 @@ def evaluate_numbers(guess):
     else:
         return -1  # Score -1 for a bad guess
 
-# create a standard scaler transformer
-#transformer = Transformer()
-
-# set the transformer for each dimension in the search space
-#for dim in param_space:
-#    dim.set_transformer(transformer)
-
 
 search_space = Space([Integer(low=0, high=10, prior='uniform', transform='normalize'),
                       Integer(low=0, high=10, prior='uniform', transform='normalize')])
 
 # Initialize the optimizer
 opt = Optimizer(search_space,
-                "GP", 
-                acq_func="gp_hedge",
+                "GP",
+                acq_func="EI",
                 acq_optimizer="sampling",
                 initial_point_generator="lhs")
 
@@ -47,6 +40,8 @@ res = None
 for _ in range(20):  # Adjust the number of iterations as needed
     suggestion = opt.ask()
     score = evaluate_numbers(suggestion)
+    if score == 0:
+        break
     res = opt.tell(suggestion, score)
 
 # Get the best numbers
